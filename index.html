@@ -2,97 +2,154 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#123c88"><title>Bulk IFSC Code v3.0</title>
+<meta name="theme-color" content="#12336b"><title>Bulk IFSC Code 4.0</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{--blue:#1459b8;--navy:#12336b;--bg:#f3f6fc;--line:#dce5f2;--muted:#64748b}
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#172554}
-header{background:linear-gradient(135deg,var(--navy),#1674db);color:#fff;padding:23px 18px 27px;border-radius:0 0 22px 22px}
-header h1{font-size:23px;margin:0 0 7px}header p{margin:0;font-size:13px;opacity:.9}
-.container{max-width:1150px;margin:auto;padding:15px}.card{background:#fff;padding:16px;border-radius:15px;box-shadow:0 3px 14px #0000000b;margin-bottom:14px}
-h2{font-size:17px;margin:0 0 12px}.hint{color:var(--muted);font-size:13px;line-height:1.5}
-textarea{width:100%;min-height:115px;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px}
-button,.file-button{border:0;padding:11px 14px;border-radius:9px;background:var(--blue);color:white;font-weight:bold;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-button:disabled{opacity:.5}.secondary,.file-button{background:#e8f0ff;color:#174b99}
+:root{--navy:#12336b;--blue:#1769c2;--bg:#f2f6fc;--line:#dbe5f2;--muted:#64748b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:#172554}
+header{background:linear-gradient(135deg,#102c5c,#1976d2);color:white;padding:23px 18px 27px;border-radius:0 0 22px 22px}
+header h1{font-size:23px;margin:0 0 7px}header p{font-size:13px;margin:0;opacity:.92}
+main{max-width:1150px;margin:auto;padding:14px}.card{background:white;border-radius:15px;padding:16px;margin-bottom:14px;box-shadow:0 3px 14px #0000000b}
+h2{font-size:17px;margin:0 0 10px}.sub{font-size:13px;color:var(--muted);line-height:1.5}
+button,.filebtn{border:0;border-radius:9px;padding:11px 14px;background:var(--blue);color:white;font-size:13px;font-weight:bold;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+button:disabled{opacity:.5}.light,.filebtn{background:#e8f0ff;color:#174b99}.red{background:#fee2e2;color:#991b1b}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}input[type=file]{display:none}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.stat{background:#edf4ff;padding:11px 6px;border-radius:10px;text-align:center;font-size:11px;color:#475569}
-.stat b{font-size:21px;display:block;color:#123c88;margin-bottom:3px}
-.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;font-size:14px}
-.table-wrap{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:9px}
-table{width:100%;border-collapse:collapse;font-size:12px;min-width:850px}th,td{padding:9px;border-bottom:1px solid #e8edf5;text-align:left;vertical-align:top}
-th{background:#edf4ff;position:sticky;top:0;z-index:1}.ok{color:#16834a;font-weight:bold}.bad{color:#dc2626;font-weight:bold}.warn{color:#a16207;font-weight:bold}
-.pill{display:inline-block;background:#eef2ff;color:#334e8a;padding:4px 8px;border-radius:20px;font-size:11px}
-#message{font-size:13px;margin-top:8px;color:#475569;white-space:pre-wrap}.progress{height:7px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin-top:10px}.progress>div{height:100%;width:0;background:#16834a}
-.summary-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.summary-item{padding:10px;background:#f4f7fc;border-radius:9px;font-size:13px;display:flex;justify-content:space-between;gap:8px}
-.history-item{padding:9px 0;border-bottom:1px solid #edf0f5;font-size:12px;display:flex;justify-content:space-between;gap:8px}
-footer{text-align:center;padding:18px;color:#64748b;font-size:12px}
-@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr}.container{padding:11px}.card{padding:13px}}
+textarea,input,select{font:14px Arial;width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#172554}
+textarea{min-height:112px;resize:vertical}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{background:#edf4ff;border-radius:10px;padding:11px 7px;text-align:center;color:#52627a;font-size:11px}.metric b{display:block;color:#123c88;font-size:21px;margin-bottom:3px}
+.status{font-size:13px;color:#475569;margin-top:9px;white-space:pre-wrap}.bar{height:7px;background:#e4eaf2;border-radius:20px;overflow:hidden;margin-top:9px}.bar>div{height:100%;width:0;background:#16834a}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}.tablebox{overflow:auto;max-height:480px;border:1px solid var(--line);border-radius:9px}
+table{width:100%;border-collapse:collapse;min-width:850px;font-size:12px}th,td{padding:9px;border-bottom:1px solid #e8edf5;text-align:left;vertical-align:top}th{position:sticky;top:0;background:#edf4ff;z-index:1}
+.good{color:#16834a;font-weight:bold}.bad{color:#dc2626;font-weight:bold}.warn{color:#a16207;font-weight:bold}
+.small{font-size:12px;color:var(--muted)}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}.sumrow{background:#f3f6fb;border-radius:8px;padding:10px;font-size:13px;display:flex;justify-content:space-between;gap:8px}
+.history{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid #edf0f5;font-size:12px}
+footer{text-align:center;color:#64748b;font-size:12px;padding:18px}
+@media(max-width:600px){main{padding:10px}.card{padding:13px}.grid{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr}}
 </style></head>
 <body>
-<header><h1>🏦 BULK IFSC CODE</h1><p>Version 3.0 • Bulk Search • Smart Filters • Bank & State Reports</p></header>
-<main class="container">
+<header><h1>🏦 BULK IFSC CODE</h1><p>Version 4.0 • Offline Master Database • Bulk Search • Investigation Reports</p></header>
+<main>
 <section class="card">
-<h2>🔍 Bulk IFSC Search</h2><p class="hint">Paste IFSC codes (one per line, comma or space separated), or upload an Excel/CSV file.</p>
+<h2>🗄️ Offline IFSC Master Database</h2>
+<p class="sub">Upload your bank IFSC master file in Excel (.xlsx/.xls) or CSV format. The records are stored in this browser on this device, so later searches can work without internet. This app does not include a preloaded official database.</p>
+<div class="actions"><label class="filebtn" for="masterFile">📥 Import IFSC Master</label><input id="masterFile" type="file" accept=".xlsx,.xls,.csv" onchange="importMaster(event)"><button class="light" onclick="refreshDbStats()">Refresh Database Info</button><button class="red" onclick="clearDatabase()">Delete Local Database</button></div>
+<div class="grid" style="margin-top:12px">
+<div class="metric"><b id="dbCount">0</b>Saved IFSC Records</div><div class="metric"><b id="dbBanks">0</b>Banks</div><div class="metric"><b id="dbStates">0</b>States</div><div class="metric"><b id="dbSize">Local</b>Storage</div>
+</div>
+<div id="dbStatus" class="status">No master database imported yet.</div><div class="bar"><div id="importBar"></div></div>
+<p class="small">Expected columns can include IFSC, BANK, BRANCH, ADDRESS, CITY/DISTRICT, STATE and MICR. Column headings are matched automatically where possible.</p>
+</section>
+
+<section class="card">
+<h2>🔎 Bulk IFSC Search</h2>
+<p class="sub">Paste IFSC codes, one per line or separated by commas/spaces, or upload a list file. Local database is checked first.</p>
 <textarea id="codes" placeholder="SBIN0000001&#10;HDFC0000001&#10;ICIC0000001"></textarea>
-<div class="actions"><button id="searchBtn" onclick="searchCodes()">Search IFSC</button><button class="secondary" onclick="clearInput()">Clear Input</button><label class="file-button" for="fileInput">📁 Upload Excel / CSV</label><input id="fileInput" type="file" accept=".xlsx,.xls,.csv" onchange="readFile(event)"></div>
-<div id="message">Ready. Internet connection required for live IFSC lookup.</div><div class="progress"><div id="progressBar"></div></div>
+<div class="actions"><button id="searchBtn" onclick="searchCodes()">Search Codes</button><button class="light" onclick="clearInput()">Clear Input</button><label class="filebtn" for="listFile">📁 Upload Code List</label><input id="listFile" type="file" accept=".xlsx,.xls,.csv,.txt" onchange="loadCodeList(event)"></div>
+<label class="small" style="display:flex;align-items:center;gap:8px;margin-top:12px"><input id="onlineFallback" type="checkbox" checked style="width:auto"> If code is not in local database, try online lookup (internet required)</label>
+<div id="searchStatus" class="status">Ready. Offline search works after importing a master database.</div><div class="bar"><div id="searchBar"></div></div>
 </section>
-<section class="card"><h2>📊 Overall Summary</h2><div class="stats">
-<div class="stat"><b id="total">0</b>Total searched</div><div class="stat"><b id="valid">0</b>Valid</div><div class="stat"><b id="invalid">0</b>Not found / invalid</div><div class="stat"><b id="duplicates">0</b>Duplicates removed</div><div class="stat"><b id="banks">0</b>Unique banks</div>
-</div><div class="actions"><button onclick="exportWorkbook()">⬇ Download Full Excel Report</button><button class="secondary" onclick="copyResults()">Copy Results</button><button class="secondary" onclick="clearResults()">Clear Results</button></div></section>
-<section class="card"><h2>🎯 Search & Filter Results</h2>
-<div class="filters">
-<input id="branchSearch" placeholder="Search bank / branch / IFSC..." oninput="renderResults()">
-<select id="stateFilter" onchange="renderResults()"><option value="">All States</option></select>
-<select id="bankFilter" onchange="renderResults()"><option value="">All Banks</option></select>
-</div><p class="hint" id="shownCount">Showing 0 records</p>
-<div class="table-wrap"><table><thead><tr><th>#</th><th>IFSC</th><th>Bank</th><th>Branch</th><th>Address</th><th>District / City</th><th>State</th><th>MICR</th><th>Status</th></tr></thead><tbody id="results"><tr><td colspan="9" class="hint">No results yet</td></tr></tbody></table></div>
+
+<section class="card">
+<h2>📊 Search Summary</h2>
+<div class="grid">
+<div class="metric"><b id="total">0</b>Total</div><div class="metric"><b id="found">0</b>Found</div><div class="metric"><b id="notFound">0</b>Not Found</div><div class="metric"><b id="dupes">0</b>Duplicates Removed</div>
+</div>
+<div class="actions"><button onclick="downloadReport()">⬇ Download Investigation Excel</button><button class="light" onclick="copyResults()">Copy Results</button><button class="light" onclick="clearResults()">Clear Results</button></div>
 </section>
-<section class="card"><h2>🏦 Bank-wise Summary</h2><div id="bankSummary" class="summary-list"><p class="hint">Search IFSC codes to build summary.</p></div></section>
-<section class="card"><h2>🗺 State-wise Summary</h2><div id="stateSummary" class="summary-list"><p class="hint">Search IFSC codes to build summary.</p></div></section>
-<section class="card"><h2>🕘 Recent Search History</h2><p class="hint">History is stored only in this browser on this device.</p><div id="history"><p class="hint">No search history yet.</p></div><div class="actions"><button class="secondary" onclick="clearHistory()">Clear History</button></div></section>
-</main><footer>Bulk IFSC Code • Version 3.0</footer>
+
+<section class="card">
+<h2>🧭 Filter & Results</h2>
+<div class="filters"><input id="q" placeholder="Search IFSC / bank / branch / address" oninput="renderResults()"><select id="stateFilter" onchange="renderResults()"><option value="">All States</option></select><select id="bankFilter" onchange="renderResults()"><option value="">All Banks</option></select></div>
+<p class="small" id="shown">Showing 0 records</p>
+<div class="tablebox"><table><thead><tr><th>#</th><th>IFSC</th><th>Bank</th><th>Branch</th><th>Address</th><th>District / City</th><th>State</th><th>MICR</th><th>Source / Status</th></tr></thead><tbody id="results"><tr><td colspan="9">No search results yet.</td></tr></tbody></table></div>
+</section>
+
+<section class="card"><h2>🏦 Bank-wise Analysis</h2><div id="bankSummary" class="summary"><span class="small">Search records to view analysis.</span></div></section>
+<section class="card"><h2>🗺️ State-wise Analysis</h2><div id="stateSummary" class="summary"><span class="small">Search records to view analysis.</span></div></section>
+<section class="card"><h2>🕘 Recent Search History</h2><p class="small">Saved locally in this browser only.</p><div id="history"><span class="small">No history yet.</span></div><div class="actions"><button class="light" onclick="clearHistory()">Clear History</button></div></section>
+</main>
+<footer>Bulk IFSC Code • Version 4.0</footer>
 <script>
-let records=[],duplicateCount=0;
-const $=id=>document.getElementById(id),PATTERN=/^[A-Z]{4}0[A-Z0-9]{6}$/;
-function msg(s){$('message').textContent=s}
-function unique(values){const seen=new Set(),out=[];duplicateCount=0;for(const v of values){const c=String(v??'').trim().toUpperCase();if(!c)continue;if(seen.has(c)){duplicateCount++;continue}seen.add(c);out.push(c)}return out}
-function parseCodes(t){return unique(t.split(/[\\s,;]+/))}
-function updateStats(total=records.length){const good=records.filter(r=>r.status==='Valid');$('total').textContent=total;$('valid').textContent=good.length;$('invalid').textContent=records.length-good.length;$('duplicates').textContent=duplicateCount;$('banks').textContent=new Set(good.map(r=>r.bank).filter(Boolean)).size}
-async function readFile(e){const f=e.target.files[0];if(!f)return;try{const buf=await f.arrayBuffer();let vals=[];
-if(f.name.toLowerCase().endsWith('.csv'))vals=new TextDecoder().decode(buf).split(/[\\r\\n,;]+/);
-else{if(!window.XLSX)throw Error('Excel reader library did not load.');const wb=XLSX.read(buf,{type:'array'});wb.SheetNames.forEach(n=>XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:false}).forEach(row=>row.forEach(v=>{if(PATTERN.test(String(v??'').trim().toUpperCase()))vals.push(v)})))}
-const codes=unique(vals.filter(v=>PATTERN.test(String(v).trim().toUpperCase())));if(!codes.length)throw Error('No valid-format IFSC codes found.');$('codes').value=codes.join('\\n');msg(f.name+': loaded '+codes.length+' unique IFSC codes; '+duplicateCount+' duplicates removed.');
-}catch(err){msg('File error: '+err.message)}e.target.value=''}
-function clearInput(){$('codes').value='';msg('Input cleared.')}
-async function searchCodes(){const codes=parseCodes($('codes').value);if(!codes.length){msg('Enter IFSC codes or upload a file.');return}if(codes.length>1000){msg('Maximum 1,000 unique codes per search. Split into batches.');return}
-records=[];$('results').innerHTML='';$('searchBtn').disabled=true;updateStats(codes.length);
-codes.forEach((c,i)=>{const tr=$('results').insertRow();[i+1,c,'Searching...','','','','','','Pending'].forEach(v=>{const td=tr.insertCell();td.textContent=v})});
-let done=0;msg('Searching '+codes.length+' codes. Keep this page open.');
-for(let start=0;start<codes.length;start+=5){const batch=codes.slice(start,start+5);const found=await Promise.all(batch.map(async c=>{
-if(!PATTERN.test(c))return {ifsc:c,status:'Invalid Format'};
-try{const res=await fetch('https://ifsc.razorpay.com/'+encodeURIComponent(c));if(!res.ok)return {ifsc:c,status:'Not Found'};const d=await res.json();return {ifsc:c,bank:d.BANK||'',branch:d.BRANCH||'',address:d.ADDRESS||'',district:d.DISTRICT||d.CITY||'',state:d.STATE||'',micr:d.MICR||'',status:'Valid'}}
-catch(e){return {ifsc:c,status:'Network Error'}}}));
-found.forEach((r,j)=>{records.push(r);const tr=$('results').rows[start+j];tr.replaceChildren();[start+j+1,r.ifsc,r.bank,r.branch,r.address,r.district,r.state,r.micr,r.status].forEach((v,i)=>{const td=tr.insertCell();td.textContent=v||'';if(i===8)td.className=r.status==='Valid'?'ok':r.status==='Invalid Format'?'bad':'warn'})});
-done+=found.length;$('progressBar').style.width=(done/codes.length*100)+'%';updateStats(codes.length);msg('Processed '+done+' / '+codes.length+'...')}
-$('searchBtn').disabled=false;updateFilters();renderSummaries();renderResults();saveHistory();msg('Completed. '+records.filter(r=>r.status==='Valid').length+' valid; '+records.filter(r=>r.status!=='Valid').length+' invalid / not found.')}
-function validRecords(){return records.filter(r=>r.status==='Valid')}
-function groupCount(key){const m=new Map();validRecords().forEach(r=>{const k=r[key]||'Not provided';m.set(k,(m.get(k)||0)+1)});return [...m.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))}
-function drawSummary(id,items){const box=$(id);box.innerHTML='';if(!items.length){box.innerHTML='<p class="hint">No data available yet.</p>';return}items.forEach(([name,count])=>{const d=document.createElement('div');d.className='summary-item';const a=document.createElement('span');a.textContent=name;const b=document.createElement('b');b.textContent=count;d.append(a,b);box.append(d)})}
-function renderSummaries(){drawSummary('bankSummary',groupCount('bank'));drawSummary('stateSummary',groupCount('state'))}
-function updateFilters(){const states=[...new Set(validRecords().map(r=>r.state).filter(Boolean))].sort(),banks=[...new Set(validRecords().map(r=>r.bank).filter(Boolean))].sort();const fill=(id,items,label)=>{const el=$(id),old=el.value;el.innerHTML='<option value="">All '+label+'</option>';items.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;el.append(o)});if(items.includes(old))el.value=old};fill('stateFilter',states,'States');fill('bankFilter',banks,'Banks')}
-function renderResults(){const q=$('branchSearch').value.toLowerCase(),state=$('stateFilter').value,bank=$('bankFilter').value;const filtered=records.filter(r=>(!state||r.state===state)&&(!bank||r.bank===bank)&&(!q||[r.ifsc,r.bank,r.branch,r.address,r.district,r.state].join(' ').toLowerCase().includes(q)));const body=$('results');body.innerHTML='';filtered.forEach((r,i)=>{const tr=body.insertRow();[i+1,r.ifsc,r.bank,r.branch,r.address,r.district,r.state,r.micr,r.status].forEach((v,j)=>{const td=tr.insertCell();td.textContent=v||'';if(j===8)td.className=r.status==='Valid'?'ok':r.status==='Invalid Format'?'bad':'warn'})});if(!filtered.length){const tr=body.insertRow(),td=tr.insertCell();td.colSpan=9;td.textContent='No matching records';td.className='hint'}$('shownCount').textContent='Showing '+filtered.length+' of '+records.length+' records'}
-function exportWorkbook(){if(!records.length){msg('No data to export.');return}if(!window.XLSX){msg('Excel export library unavailable.');return}
-const wb=XLSX.utils.book_new();const detail=records.map((r,i)=>({'Sr No':i+1,'IFSC':r.ifsc,'Bank Name':r.bank||'','Branch':r.branch||'','Address':r.address||'','District / City':r.district||'','State':r.state||'','MICR':r.micr||'','Status':r.status}));XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(detail),'All Results');
-const bank=groupCount('bank').map(([name,count])=>({'Bank Name':name,'IFSC Count':count}));if(bank.length)XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(bank),'Bank Summary');
-const state=groupCount('state').map(([name,count])=>({'State':name,'IFSC Count':count}));if(state.length)XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(state),'State Summary');
-XLSX.writeFile(wb,'Bulk_IFSC_Report_v3.xlsx');msg('Excel report downloaded with separate summary sheets.')}
-async function copyResults(){if(!records.length){msg('No results to copy.');return}const t=records.map(r=>[r.ifsc,r.bank,r.branch,r.address,r.district,r.state,r.micr,r.status].join('\\t')).join('\\n');try{await navigator.clipboard.writeText(t);msg('Results copied.')}catch(e){msg('Clipboard permission unavailable; use Excel download.')}}
-function history(){try{return JSON.parse(localStorage.getItem('bulkIfscHistoryV3')||'[]')}catch(e){return []}}
-function saveHistory(){const h=history();h.unshift({date:new Date().toLocaleString(),total:records.length,valid:validRecords().length});localStorage.setItem('bulkIfscHistoryV3',JSON.stringify(h.slice(0,10)));renderHistory()}
-function renderHistory(){const box=$('history'),h=history();box.innerHTML='';if(!h.length){box.textContent='No search history yet.';return}h.forEach(x=>{const d=document.createElement('div');d.className='history-item';const a=document.createElement('span');a.textContent=x.date+' • '+x.total+' searched';const b=document.createElement('b');b.textContent=x.valid+' valid';d.append(a,b);box.append(d)})}
-function clearHistory(){localStorage.removeItem('bulkIfscHistoryV3');renderHistory()}
-function clearResults(){records=[];duplicateCount=0;updateStats(0);$('results').innerHTML='<tr><td colspan="9">No results yet</td></tr>';$('progressBar').style.width='0';$('branchSearch').value='';updateFilters();renderSummaries();renderResults();msg('Results cleared.')}
-renderHistory();renderSummaries();
+const DB_NAME='BulkIFSC_v4',STORE='branches',PAT=/^[A-Z]{4}0[A-Z0-9]{6}$/;
+let db=null,records=[],duplicateCount=0;
+const $=id=>document.getElementById(id);
+function setStatus(id,s){$(id).textContent=s}
+function openDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,1);req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains(STORE)){const st=d.createObjectStore(STORE,{keyPath:'ifsc'});st.createIndex('bank','bank');st.createIndex('state','state')}};req.onsuccess=()=>{db=req.result;resolve(db)};req.onerror=()=>reject(req.error)})}
+function txStore(mode='readonly'){return db.transaction(STORE,mode).objectStore(STORE)}
+function countDb(){return new Promise((resolve,reject)=>{const r=txStore().count();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+function allDb(){return new Promise((resolve,reject)=>{const r=txStore().getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+function getDb(code){return new Promise((resolve,reject)=>{const r=txStore().get(code);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error)})}
+function norm(s){return String(s??'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'')}
+function rowToRecord(row){
+ const keys=Object.keys(row||{});const find=(names)=>{for(const n of names){const key=keys.find(k=>norm(k)===norm(n));if(key!==undefined)return String(row[key]??'').trim()}return ''};
+ const ifsc=find(['IFSC','IFSC CODE','IFSC_CODE']).toUpperCase();
+ if(!PAT.test(ifsc))return null;
+ return {ifsc,bank:find(['BANK','BANK NAME','BANK_NAME']),branch:find(['BRANCH','BRANCH NAME','BRANCH_NAME']),address:find(['ADDRESS','BRANCH ADDRESS']),district:find(['DISTRICT','CITY','CENTRE','CENTER']),state:find(['STATE']),micr:find(['MICR','MICR CODE'])};
+}
+async function importMaster(e){
+ const file=e.target.files[0];if(!file)return;
+ try{
+  if(!window.XLSX)throw Error('Excel reader library failed to load. Connect to internet and reload the page.');
+  setStatus('dbStatus','Reading '+file.name+' ...');const buf=await file.arrayBuffer();let rows=[];
+  if(file.name.toLowerCase().endsWith('.csv')){const wb=XLSX.read(new TextDecoder().decode(buf),{type:'string'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''})}
+  else{const wb=XLSX.read(buf,{type:'array'});for(const name of wb.SheetNames){const part=XLSX.utils.sheet_to_json(wb.Sheets[name],{defval:''});rows.push(...part)}}
+  const clean=rows.map(rowToRecord).filter(Boolean);if(!clean.length)throw Error('No IFSC records found. Check that the file has a column named IFSC.');
+  const unique=new Map();clean.forEach(r=>unique.set(r.ifsc,r));
+  const list=[...unique.values()];let done=0;
+  for(let i=0;i<list.length;i+=500){
+   const chunk=list.slice(i,i+500);
+   await new Promise((resolve,reject)=>{
+    const transaction=db.transaction(STORE,'readwrite');
+    const store=transaction.objectStore(STORE);
+    chunk.forEach(r=>store.put(r));
+    transaction.oncomplete=resolve;
+    transaction.onerror=()=>reject(transaction.error);
+    transaction.onabort=()=>reject(transaction.error);
+   });
+   done+=chunk.length;$('importBar').style.width=(done/list.length*100)+'%';
+   setStatus('dbStatus','Importing '+done+' / '+list.length+' unique IFSC records...');
+  }
+  setStatus('dbStatus','Import complete: '+list.length+' unique records saved on this device.');await refreshDbStats();
+ }catch(err){setStatus('dbStatus','Import failed: '+err.message)}e.target.value='';
+}
+async function refreshDbStats(){try{const rows=await allDb();$('dbCount').textContent=rows.length;$('dbBanks').textContent=new Set(rows.map(x=>x.bank).filter(Boolean)).size;$('dbStates').textContent=new Set(rows.map(x=>x.state).filter(Boolean)).size;$('dbSize').textContent='IndexedDB';}catch(e){setStatus('dbStatus','Database is not available yet.')}}
+async function clearDatabase(){if(!confirm('Delete all locally saved IFSC master records from this device?'))return;await new Promise((resolve,reject)=>{const r=indexedDB.deleteDatabase(DB_NAME);r.onsuccess=resolve;r.onerror=()=>reject(r.error);r.onblocked=()=>reject(Error('Close other tabs using this app and try again.'))});db=null;await openDb();await refreshDbStats();setStatus('dbStatus','Local database deleted.')}
+function uniqueCodes(values){const seen=new Set(),out=[];duplicateCount=0;for(const v of values){const c=String(v??'').trim().toUpperCase();if(!c)continue;if(seen.has(c)){duplicateCount++;continue}seen.add(c);out.push(c)}return out}
+function parseCodes(s){return uniqueCodes(s.split(/[\\s,;]+/))}
+async function loadCodeList(e){const f=e.target.files[0];if(!f)return;try{let vals=[];if(f.name.toLowerCase().endsWith('.txt'))vals=(await f.text()).split(/[\\s,;]+/);else{if(!window.XLSX)throw Error('Excel reader library not loaded');const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});wb.SheetNames.forEach(n=>XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:false}).forEach(row=>row.forEach(v=>{if(PAT.test(String(v??'').trim().toUpperCase()))vals.push(v)})))}const codes=uniqueCodes(vals.filter(v=>PAT.test(String(v).trim().toUpperCase())));if(!codes.length)throw Error('No IFSC codes found in file');$('codes').value=codes.join('\\n');setStatus('searchStatus','Loaded '+codes.length+' unique codes. '+duplicateCount+' duplicates removed.')}catch(err){setStatus('searchStatus','File error: '+err.message)}e.target.value=''}
+function clearInput(){$('codes').value='';setStatus('searchStatus','Input cleared.')}
+async function searchCodes(){
+ const codes=parseCodes($('codes').value);if(!codes.length){setStatus('searchStatus','Enter IFSC codes or upload a list.');return}if(codes.length>10000){setStatus('searchStatus','Maximum 10,000 codes per batch. Split larger files.');return}
+ records=[];$('searchBtn').disabled=true;$('results').innerHTML='';let found=0,notFound=0,done=0; $('total').textContent=codes.length;$('dupes').textContent=duplicateCount;
+ const useOnline=$('onlineFallback').checked;
+ for(let i=0;i<codes.length;i++){
+  const code=codes[i];let r=null;
+  if(PAT.test(code)){try{r=await getDb(code)}catch(e){}}
+  if(r){r={...r,source:'Offline database',status:'Found'}}
+  else if(!PAT.test(code)){r={ifsc:code,status:'Invalid format',source:'Validation'}}
+  else if(useOnline){try{const res=await fetch('https://ifsc.razorpay.com/'+encodeURIComponent(code));if(res.ok){const d=await res.json();r={ifsc:code,bank:d.BANK||'',branch:d.BRANCH||'',address:d.ADDRESS||'',district:d.DISTRICT||d.CITY||'',state:d.STATE||'',micr:d.MICR||'',source:'Online API',status:'Found'}}else r={ifsc:code,status:'Not found',source:'Online API'}}catch(e){r={ifsc:code,status:'Offline / API error',source:'Online API'}}}
+  else r={ifsc:code,status:'Not in local database',source:'Offline database'};
+  records.push(r);if(r.status==='Found')found++;else notFound++;done++;
+  $('found').textContent=found;$('notFound').textContent=notFound;$('searchBar').style.width=(done/codes.length*100)+'%';
+  if(done%25===0||done===codes.length){setStatus('searchStatus','Processed '+done+' / '+codes.length+' codes...');await new Promise(resolve=>setTimeout(resolve,0))}
+ }
+ $('searchBtn').disabled=false;updateFilters();renderResults();renderAnalysis();saveHistory();setStatus('searchStatus','Completed: '+found+' found, '+notFound+' not found / invalid.');}
+function updateFilters(){const good=records.filter(r=>r.status==='Found');fillSelect('stateFilter',[...new Set(good.map(r=>r.state).filter(Boolean))].sort(),'All States');fillSelect('bankFilter',[...new Set(good.map(r=>r.bank).filter(Boolean))].sort(),'All Banks')}
+function fillSelect(id,items,label){const el=$(id),old=el.value;el.innerHTML='<option value="">'+label+'</option>';items.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;el.append(o)});if(items.includes(old))el.value=old}
+function renderResults(){const q=$('q').value.toLowerCase(),state=$('stateFilter').value,bank=$('bankFilter').value;const rows=records.filter(r=>(!state||r.state===state)&&(!bank||r.bank===bank)&&(!q||[r.ifsc,r.bank,r.branch,r.address,r.district,r.state].join(' ').toLowerCase().includes(q)));const body=$('results');body.innerHTML='';rows.forEach((r,i)=>{const tr=body.insertRow();[i+1,r.ifsc,r.bank,r.branch,r.address,r.district,r.state,r.micr,r.source+' / '+r.status].forEach((v,j)=>{const td=tr.insertCell();td.textContent=v||'';if(j===8)td.className=r.status==='Found'?'good':'warn'})});if(!rows.length){const tr=body.insertRow(),td=tr.insertCell();td.colSpan=9;td.textContent='No matching records'}$('shown').textContent='Showing '+rows.length+' of '+records.length+' records'}
+function group(key){const m=new Map();records.filter(r=>r.status==='Found').forEach(r=>{const k=r[key]||'Not provided';m.set(k,(m.get(k)||0)+1)});return [...m].sort((a,b)=>b[1]-a[1])}
+function renderGroup(id,arr){const box=$(id);box.innerHTML='';if(!arr.length){box.textContent='No data yet.';return}arr.forEach(([name,n])=>{const d=document.createElement('div');d.className='sumrow';const a=document.createElement('span');a.textContent=name;const b=document.createElement('b');b.textContent=n;d.append(a,b);box.append(d)})}
+function renderAnalysis(){renderGroup('bankSummary',group('bank'));renderGroup('stateSummary',group('state'))}
+function downloadReport(){if(!records.length){setStatus('searchStatus','No results to export.');return}if(!window.XLSX){setStatus('searchStatus','Excel library unavailable.');return}
+ const wb=XLSX.utils.book_new();const detail=records.map((r,i)=>({'Sr No':i+1,IFSC:r.ifsc,'Bank Name':r.bank||'','Branch':r.branch||'','Address':r.address||'','District / City':r.district||'','State':r.state||'',MICR:r.micr||'',Source:r.source||'',Status:r.status}));XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(detail),'Search Results');
+ const b=group('bank').map(([name,count])=>({'Bank Name':name,'Record Count':count}));if(b.length)XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(b),'Bank Summary');
+ const s=group('state').map(([name,count])=>({'State':name,'Record Count':count}));if(s.length)XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(s),'State Summary');
+ XLSX.writeFile(wb,'Bulk_IFSC_Investigation_v4.xlsx');setStatus('searchStatus','Excel report downloaded with Search Results, Bank Summary and State Summary sheets.')}
+async function copyResults(){if(!records.length){setStatus('searchStatus','No results to copy.');return}const text=records.map(r=>[r.ifsc,r.bank,r.branch,r.address,r.district,r.state,r.micr,r.source,r.status].join('\\t')).join('\\n');try{await navigator.clipboard.writeText(text);setStatus('searchStatus','Results copied.')}catch(e){setStatus('searchStatus','Clipboard unavailable. Use Excel export.')}}
+function hist(){try{return JSON.parse(localStorage.getItem('ifscHistoryV4')||'[]')}catch(e){return []}}
+function saveHistory(){const h=hist();h.unshift({date:new Date().toLocaleString(),total:records.length,found:records.filter(r=>r.status==='Found').length});localStorage.setItem('ifscHistoryV4',JSON.stringify(h.slice(0,12)));renderHistory()}
+function renderHistory(){const box=$('history'),h=hist();box.innerHTML='';if(!h.length){box.textContent='No history yet.';return}h.forEach(x=>{const d=document.createElement('div');d.className='history';const a=document.createElement('span');a.textContent=x.date+' • '+x.total+' searched';const b=document.createElement('b');b.textContent=x.found+' found';d.append(a,b);box.append(d)})}
+function clearHistory(){localStorage.removeItem('ifscHistoryV4');renderHistory()}
+function clearResults(){records=[];duplicateCount=0;['total','found','notFound','dupes'].forEach(id=>$(id).textContent='0');$('results').innerHTML='<tr><td colspan="9">No search results yet.</td></tr>';$('searchBar').style.width='0';$('q').value='';updateFilters();renderAnalysis();renderResults();setStatus('searchStatus','Results cleared.')}
+(async()=>{try{await openDb();await refreshDbStats()}catch(e){setStatus('dbStatus','This browser does not support local database storage.')}renderHistory()})();
 </script></body></html>
