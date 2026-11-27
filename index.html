@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk IFSC Code</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f2f5fc;
+ color:#172554;
+}
+header{
+ background:linear-gradient(135deg,#123c88,#1674db);
+ color:white;
+ padding:25px 18px;
+ border-radius:0 0 22px 22px;
+}
+header h2{margin:0 0 8px}
+header p{margin:0;font-size:14px}
+.container{padding:18px;max-width:900px;margin:auto}
+.card{
+ background:white;
+ padding:18px;
+ border-radius:15px;
+ box-shadow:0 3px 14px #0000000d;
+ margin-bottom:17px;
+}
+textarea{
+ width:100%;
+ height:145px;
+ padding:13px;
+ border:1px solid #cbd5e1;
+ border-radius:10px;
+ font-size:15px;
+ resize:vertical;
+}
+button{
+ border:0;
+ padding:13px 18px;
+ border-radius:9px;
+ background:#1769d2;
+ color:white;
+ font-weight:bold;
+ cursor:pointer;
+}
+.secondary{background:#e7efff;color:#174b99}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.stats{display:flex;gap:10px}
+.stat{
+ flex:1;background:#edf4ff;padding:13px;
+ border-radius:10px;text-align:center;
+}
+.stat b{font-size:23px;display:block}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:11px;border-bottom:1px solid #e2e8f0;text-align:left}
+th{background:#edf4ff}
+.status{color:green;font-weight:bold}
+.error{color:#dc2626}
+footer{text-align:center;padding:20px;color:#64748b;font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+<h2>🏦 BULK IFSC CODE</h2>
+<p>Search Multiple Bank IFSC Codes at One Time</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h3>🔍 Bulk IFSC Search</h3>
+<p>Enter multiple IFSC codes (one per line or comma separated)</p>
+
+<textarea id="codes" placeholder="SBIN0001234
+HDFC0001234
+ICIC0001234"></textarea>
+
+<div class="actions">
+<button onclick="searchCodes()">Search IFSC</button>
+<button class="secondary" onclick="clearAll()">Clear</button>
+</div>
+</div>
+
+<div class="card">
+<h3>📊 Search Summary</h3>
+<div class="stats">
+<div class="stat"><b id="total">0</b>Total</div>
+<div class="stat"><b id="valid">0</b>Valid</div>
+<div class="stat"><b id="invalid">0</b>Invalid</div>
+</div>
+</div>
+
+<div class="card">
+<h3>📋 IFSC Search Results</h3>
+<div class="actions">
+<button onclick="exportCSV()">Export Excel (CSV)</button>
+<button class="secondary" onclick="copyResults()">Copy Results</button>
+</div>
+<br>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>IFSC</th>
+<th>Bank</th>
+<th>Branch</th>
+<th>Address</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="results">
+<tr><td colspan="5">No results yet</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<footer>Bulk IFSC Code App | Version 1.0</footer>
+
+<script>
+let records=[];
+
+async function searchCodes(){
+ const raw=document.getElementById("codes").value;
+ const codes=[...new Set(raw.split(/[\s,;]+/)
+ .map(x=>x.trim().toUpperCase()).filter(Boolean))];
+
+ if(!codes.length){
+ alert("Please enter IFSC codes");
+ return;
+ }
+
+ records=[];
+ const tbody=document.getElementById("results");
+ tbody.innerHTML="";
+
+ document.getElementById("total").textContent=codes.length;
+ document.getElementById("valid").textContent="0";
+ document.getElementById("invalid").textContent="0";
+
+ for(const code of codes){
+  const tr=document.createElement("tr");
+  tr.innerHTML=`<td>${escapeHTML(code)}</td><td colspan="4">Searching...</td>`;
+  tbody.appendChild(tr);
+ }
+
+ let valid=0,invalid=0;
+
+ for(let i=0;i<codes.length;i++){
+  const code=codes[i];
+  const tr=tbody.rows[i];
+
+  if(!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(code)){
+   invalid++;
+   records.push({ifsc:code,bank:"",branch:"",address:"",status:"Invalid"});
+   tr.innerHTML=`<td>${escapeHTML(code)}</td><td colspan="3">Invalid IFSC format</td><td class="error">Invalid</td>`;
+   updateCounts(valid,invalid);
+   continue;
+  }
+
+  try{
+   const response=await fetch(
+    "https://ifsc.razorpay.com/"+encodeURIComponent(code)
+   );
+
+   if(!response.ok) throw new Error("Not found");
+
+   const d=await response.json();
+   valid++;
+
+   records.push({
+    ifsc:code,
+    bank:d.BANK||"",
+    branch:d.BRANCH||"",
+    address:d.ADDRESS||"",
+    status:"Valid"
+   });
+
+   tr.innerHTML=`
+   <td>${escapeHTML(code)}</td>
+   <td>${escapeHTML(d.BANK||"")}</td>
+   <td>${escapeHTML(d.BRANCH||"")}</td>
+   <td>${escapeHTML(d.ADDRESS||"")}</td>
+   <td class="status">Valid</td>`;
+  }catch(e){
+   invalid++;
+   records.push({ifsc:code,bank:"",branch:"",address:"",status:"Not Found"});
+   tr.innerHTML=`<td>${escapeHTML(code)}</td><td colspan="3">Not Found / Network Error</td><td class="error">Not Found</td>`;
+  }
+  updateCounts(valid,invalid);
+ }
+}
+
+function updateCounts(v,iv){
+ document.getElementById("valid").textContent=v;
+ document.getElementById("invalid").textContent=iv;
+}
+
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+function clearAll(){
+ document.getElementById("codes").value="";
+ document.getElementById("results").innerHTML='<tr><td colspan="5">No results yet</td></tr>';
+ document.getElementById("total").textContent="0";
+ updateCounts(0,0);
+ records=[];
+}
+
+function exportCSV(){
+ if(!records.length){alert("No results");return;}
+ const headers=["IFSC","Bank","Branch","Address","Status"];
+ const rows=records.map(r=>[r.ifsc,r.bank,r.branch,r.address,r.status]);
+ const csv=[headers,...rows].map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="Bulk_IFSC_Results.csv";
+ a.click();
+ URL.revokeObjectURL(a.href);
+}
+
+function copyResults(){
+ if(!records.length){alert("No results");return;}
+ const text=records.map(r=>`${r.ifsc} | ${r.bank} | ${r.branch} | ${r.address} | ${r.status}`).join("\n");
+ if(navigator.clipboard?.writeText){
+ navigator.clipboard.writeText(text).then(()=>alert("Copied!")).catch(()=>alert("Copy failed"));
+ }else{alert("Clipboard not supported");}
+}
+</script>
+</body>
+</html>
